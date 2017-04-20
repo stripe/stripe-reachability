@@ -31,6 +31,10 @@ check_os() {
     esac
 }
 
+check_ip() {
+  run curl -4 --write-out "\n" ifconfig.co/json 
+}
+
 dig_short() {
     output="$(dig +short "$@")"
     if [ -z "$output" ]; then
@@ -82,6 +86,7 @@ gethostbyname() {
 
 auto_test_all() {
     check os
+    check ip
     check dns
     check ping
     check route
