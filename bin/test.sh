@@ -47,6 +47,8 @@ check_dns() {
 
     from_local="$(gethostbyname api.stripe.com)"
 
+    echo "api.stripe.com IP: $from_local"
+    echo "api.stripe.com nameservers: $stripe_ns"
     if ! grep -x "$from_local" <<< "$api_addresses" >/dev/null; then
         echo "Error: mismatch between resolved api.stripe.com addresses"
         echo "gethostbyname: $from_local"
