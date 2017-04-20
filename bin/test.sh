@@ -61,8 +61,12 @@ check_ping() {
     run ping -c 10 api.stripe.com
 }
 
-check_mtr() {
-    run mtr -n --report api.stripe.com
+check_route() {
+    if command -v mtr 2>/dev/null; then
+        run mtr -n --report api.stripe.com
+    elif command -v traceroute 2>/dev/null; then
+        run traceroute -n -m 20 api.stripe.com
+    fi
 }
 
 check_curl_http() {
@@ -80,7 +84,7 @@ auto_test_all() {
     check os
     check dns
     check ping
-    check mtr
+    check route
     check curl_http
     check curl_https
 }
