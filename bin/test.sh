@@ -31,6 +31,10 @@ check_os() {
     esac
 }
 
+check_ip() {
+  run curl -4 --write-out "\n" ifconfig.co/json 
+}
+
 dig_short() {
     output="$(dig +short "$@")"
     if [ -z "$output" ]; then
@@ -47,6 +51,8 @@ check_dns() {
 
     from_local="$(gethostbyname api.stripe.com)"
 
+    echo "api.stripe.com IP: $from_local"
+    echo "api.stripe.com nameservers: $stripe_ns"
     if ! grep -x "$from_local" <<< "$api_addresses" >/dev/null; then
         echo "Error: mismatch between resolved api.stripe.com addresses"
         echo "gethostbyname: $from_local"
@@ -59,8 +65,12 @@ check_ping() {
     run ping -c 10 api.stripe.com
 }
 
-check_mtr() {
-    run mtr -n --report api.stripe.com
+check_route() {
+    if command -v mtr 2>/dev/null; then
+        run mtr -n --report api.stripe.com
+    elif command -v traceroute 2>/dev/null; then
+        run traceroute -n -m 20 api.stripe.com
+    fi
 }
 
 check_curl_http() {
@@ -76,9 +86,10 @@ gethostbyname() {
 
 auto_test_all() {
     check os
+    check ip
     check dns
     check ping
-    check mtr
+    check route
     check curl_http
     check curl_https
 }
