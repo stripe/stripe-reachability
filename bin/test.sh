@@ -44,23 +44,6 @@ dig_short() {
     echo "$output"
 }
 
-check_dns() {
-    stripe_ns="$(dig_short -t ns stripe.com)"
-    stripe_first_ns="$(head -1 <<< "$stripe_ns")"
-    api_addresses="$(dig_short -t a api.stripe.com "@$stripe_first_ns")"
-
-    from_local="$(gethostbyname api.stripe.com)"
-
-    echo "api.stripe.com IP: $from_local"
-    echo "api.stripe.com nameservers: $stripe_ns"
-    if ! grep -x "$from_local" <<< "$api_addresses" >/dev/null; then
-        echo "Error: mismatch between resolved api.stripe.com addresses"
-        echo "gethostbyname: $from_local"
-        echo "DIG: $api_addresses"
-        return 2
-    fi
-}
-
 check_ping() {
     run ping -c 10 api.stripe.com
 }
@@ -87,7 +70,6 @@ gethostbyname() {
 auto_test_all() {
     check os
     check ip
-    check dns
     check ping
     check route
     check curl_http
