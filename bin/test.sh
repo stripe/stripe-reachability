@@ -44,10 +44,6 @@ dig_short() {
     echo "$output"
 }
 
-check_ping() {
-    run ping -c 10 api.stripe.com
-}
-
 check_route() {
     if command -v mtr 2>/dev/null; then
         run mtr -n --report api.stripe.com
@@ -56,9 +52,6 @@ check_route() {
     fi
 }
 
-check_curl_http() {
-    run curl -Iv http://api.stripe.com/healthcheck
-}
 check_curl_https() {
     run curl -Iv https://api.stripe.com/healthcheck
 }
@@ -70,9 +63,7 @@ gethostbyname() {
 auto_test_all() {
     check os
     check ip
-    check ping
     check route
-    check curl_http
     check curl_https
 }
 
