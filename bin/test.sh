@@ -56,6 +56,11 @@ check_curl_https() {
     run curl -Iv https://api.stripe.com/healthcheck
 }
 
+check_curl_terminal_https() {
+    run curl -Iv https://armada.stripe.com
+    run curl -Iv https://gator.stripe.com
+}
+
 gethostbyname() {
     run python -c "import socket; print socket.gethostbyname('$1')"
 }
@@ -65,6 +70,7 @@ auto_test_all() {
     check ip
     check route
     check curl_https
+    check curl_terminal_https
 }
 
 auto_test_all
